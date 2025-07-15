@@ -40,7 +40,6 @@ func CreateCategory(w http.ResponseWriter, r *http.Request) {
 		category.Name = r.FormValue("name")
 		category.CreatedAt = time.Now()
 		category.UpdatedAt = time.Now()
-		categorymodel.Create(category)
 
 		if ok := categorymodel.Create(category); !ok {
 			template, err := template.ParseFiles("views/categories/create_category.html")

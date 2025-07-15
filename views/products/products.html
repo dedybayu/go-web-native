@@ -29,7 +29,7 @@
                         <a class="nav-link text-light" href="/products">Products</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-light" href="/product">Categories</a>
+                        <a class="nav-link text-light" href="/categories">Categories</a>
                     </li>
 
                 </ul>
@@ -44,7 +44,7 @@
     <div class="container mt-3">
         <h1>List Product!</h1>
         <hr>
-        <a href="/product/create" class="btn btn-primary">Add Product</a>
+        <a href="/products/create" class="btn btn-primary">Add Product</a>
         <hr>
         <table class="table table-bordered mt-2 text-center">
             <thead class="table-dark">
@@ -64,9 +64,9 @@
                     <td>{{.Stock}}</td>
                     <!-- <td>{{.Description}}</td> -->
                     <td>
-                        <a href="/product/show?id={{.Id}}" class="btn btn-success">Detail</a>
-                        <a href="/product/edit?id={{.Id}}" class="btn btn-warning">Edit</a>
-                        <a href="/product/delete?id={{.Id}}" class="btn btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
+                        <a href="/products/show?id={{.Id}}" class="btn btn-info">Detail</a>
+                        <a href="/products/edit?id={{.Id}}" class="btn btn-warning">Edit</a>
+                        <a href="/products/delete?id={{.Id}}" class="btn btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
                     </td>
                 </tr>
                 {{end}}

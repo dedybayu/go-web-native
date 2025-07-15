@@ -43,3 +43,16 @@ func GetAll() []entities.Product {
 	}
 	return products	
 }
+
+func Create(product entities.Product) bool {
+	result, err := config.DB.Exec("INSERT INTO products (name, stock, description, category_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)",
+		product.Name, product.Stock, product.Description, product.Category.Id, product.CreatedAt, product.UpdatedAt)
+	if err != nil {
+		panic(err)
+	}
+	lastInsertId, err := result.LastInsertId()
+	if err != nil {
+		panic(err)
+	}
+	return lastInsertId > 0
+}
