@@ -28,6 +28,36 @@ func IndexProducts(w http.ResponseWriter, r *http.Request) {
 
 func ShowProduct(w http.ResponseWriter, r *http.Request) {
 	// Handle the form submission for creating a product
+	if r.Method == "GET" {
+		// Handle the products page request
+		temp, err := template.ParseFiles("views/products/show_product.html")
+		if err != nil {
+			panic(err)
+		}
+		idString := r.URL.Query().Get("id")
+		if idString == "" {
+			http.Error(w, "Product ID is required", http.StatusBadRequest)
+			return
+		}
+
+		id, err := strconv.Atoi(idString)
+		if err != nil {
+			http.Error(w, "Invalid product ID", http.StatusBadRequest)
+			return
+		}
+
+		product := productmodel.GetById(id)
+		if product == nil {
+			http.Error(w, "Product not found", http.StatusNotFound)
+			return
+		}
+
+		data := map[string]any{
+			"product": product,
+		}
+
+		temp.Execute(w, data)
+	}
 }
 func CreateProduct(w http.ResponseWriter, r *http.Request) {
 	// Handle the form submission for creating a product
@@ -84,6 +114,82 @@ func CreateProduct(w http.ResponseWriter, r *http.Request) {
 
 func EditProduct(w http.ResponseWriter, r *http.Request) {
 	// Handle the form submission for editing a product
+	if r.Method == "GET" {
+		// Handle the products page request
+		temp, err := template.ParseFiles("views/products/edit_product.html")
+		if err != nil {
+			panic(err)
+		}
+		idString := r.URL.Query().Get("id")
+		if idString == "" {
+			http.Error(w, "Product ID is required", http.StatusBadRequest)
+			return
+		}
+
+		id, err := strconv.Atoi(idString)
+		if err != nil {
+			http.Error(w, "Invalid product ID", http.StatusBadRequest)
+			return
+		}
+
+		product := productmodel.GetById(id)
+		if product == nil {
+			http.Error(w, "Product not found", http.StatusNotFound)
+			return
+		}
+
+		categories := categorymodel.GetAll()
+		data := map[string]any{
+			"product":    product,
+			"categories": categories,
+		}
+
+		temp.Execute(w, data)
+	}
+
+	if r.Method == "POST" {
+		// Handle the form submission for creating a product
+		var product entities.Product
+
+		categoryId, err := strconv.Atoi(r.FormValue("category_id"))
+		if err != nil {
+			http.Error(w, "Invalid category ID", http.StatusBadRequest)
+			return
+		}
+
+		stock, err := strconv.Atoi(r.FormValue("stock"))
+		if err != nil || stock < 0 {
+			http.Error(w, "Invalid stock value", http.StatusBadRequest)
+			return
+		}
+
+		idString := r.FormValue("id")
+		if idString == "" {
+			http.Error(w, "Product ID is required", http.StatusBadRequest)
+			return
+		}
+		strconv.Atoi(idString)
+		id, err := strconv.Atoi(idString)
+		if err != nil {
+			http.Error(w, "Invalid category ID", http.StatusBadRequest)
+			return
+		}
+
+		product.Id = uint(id)
+		product.Name = r.FormValue("name")
+		product.Description = r.FormValue("description")
+		product.Stock = int64(stock)
+		product.Category.Id = uint(categoryId)
+		product.CreatedAt = time.Now()
+		product.UpdatedAt = time.Now()
+
+		if ok := productmodel.Update(product); !ok {
+			http.Error(w, "Failed to update product", http.StatusInternalServerError)
+			return
+		}
+
+		http.Redirect(w, r, "/products", http.StatusSeeOther)
+	}
 }
 
 func DeleteProduct(w http.ResponseWriter, r *http.Request) {
