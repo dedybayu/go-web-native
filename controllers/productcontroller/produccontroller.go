@@ -88,7 +88,21 @@ func EditProduct(w http.ResponseWriter, r *http.Request) {
 
 func DeleteProduct(w http.ResponseWriter, r *http.Request) {
 	// Handle the form submission for deleting a product
-	
+		if r.Method == "GET" {
+		idString := r.URL.Query().Get("id")
+		if idString == "" {
+			http.Error(w, "Category ID is required", http.StatusBadRequest)
+			return
+		}
+		strconv.Atoi(idString)
+		id, err := strconv.Atoi(idString)
+		if err != nil {
+			http.Error(w, "Invalid category ID", http.StatusBadRequest)
+			return
+		}
+		productmodel.Delete(id)
+		http.Redirect(w, r, "/products", http.StatusSeeOther)
+	}
 }
 
 func limitWords(s string, max int) string {
